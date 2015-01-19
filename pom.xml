@@ -4,7 +4,7 @@
 	<groupId>be.nabu.libs.datastore</groupId>
 	<artifactId>datastore-urn-database</artifactId>
 	<packaging>bundle</packaging>
-	<version>1.0</version>
+	<version>1.1-SNAPSHOT</version>
 	<name>datastore-urn-database</name>
 	<url>http://nabu.be</url>
 	<description>A framework for data storage</description>
