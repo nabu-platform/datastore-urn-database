@@ -42,15 +42,20 @@ public class DatabaseURNDAO {
 		Connection connection = getConnection();
 		try {
 			PreparedStatement statement = connection.prepareStatement("insert into urns (id, urn, created, url) values (?,?,?,?)");
-			int counter = 1;
-			statement.setString(counter++, id);
-			statement.setString(counter++, urn.toString());
-			statement.setDate(counter++, new java.sql.Date(normalize(date).getTime()), Calendar.getInstance(timezone));
-			// the method URI.toString() will return escaped values
-			// for readability purposes we decode this and encode it again on lookup
-			statement.setString(counter++, URIUtils.decodeURI(url.toString()));
-			if (statement.executeUpdate() != 1) {
-				throw new SQLException("Could not insert urn for " + url);
+			try {
+				int counter = 1;
+				statement.setString(counter++, id);
+				statement.setString(counter++, urn.toString());
+				statement.setDate(counter++, new java.sql.Date(normalize(date).getTime()), Calendar.getInstance(timezone));
+				// the method URI.toString() will return escaped values
+				// for readability purposes we decode this and encode it again on lookup
+				statement.setString(counter++, URIUtils.decodeURI(url.toString()));
+				if (statement.executeUpdate() != 1) {
+					throw new SQLException("Could not insert urn for " + url);
+				}
+			}
+			finally {
+				statement.close();
 			}
 			commit(connection);
 		}
@@ -64,13 +69,18 @@ public class DatabaseURNDAO {
 		Connection connection = getConnection();
 		try {
 			PreparedStatement statement = connection.prepareStatement("select url from urns where urn = ? and created = ?");
-			int counter = 1;
-			statement.setString(counter++, urn.toString());
-			statement.setDate(counter++, new java.sql.Date(normalize(created).getTime()), Calendar.getInstance(timezone));
-			ResultSet result = statement.executeQuery();
 			URI url = null;
-			if (result.next()) {
-				url = new URI(URIUtils.encodeURI(result.getString("url")));
+			try {
+				int counter = 1;
+				statement.setString(counter++, urn.toString());
+				statement.setDate(counter++, new java.sql.Date(normalize(created).getTime()), Calendar.getInstance(timezone));
+				ResultSet result = statement.executeQuery();
+				if (result.next()) {
+					url = new URI(URIUtils.encodeURI(result.getString("url")));
+				}
+			}
+			finally {
+				statement.close();
 			}
 			commit(connection);
 			return url;
@@ -89,12 +99,17 @@ public class DatabaseURNDAO {
 		Connection connection = getConnection();
 		try {
 			PreparedStatement statement = connection.prepareStatement("select urn from urns where url = ?");
-			int counter = 1;
-			statement.setString(counter++, url.toString());
-			ResultSet result = statement.executeQuery();
 			URI urn = null;
-			if (result.next()) {
-				urn = new URI(URIUtils.encodeURI(result.getString("urn")));
+			try {
+				int counter = 1;
+				statement.setString(counter++, url.toString());
+				ResultSet result = statement.executeQuery();
+				if (result.next()) {
+					urn = new URI(URIUtils.encodeURI(result.getString("urn")));
+				}
+			}
+			finally {
+				statement.close();
 			}
 			commit(connection);
 			return urn;
@@ -115,17 +130,23 @@ public class DatabaseURNDAO {
 				connection.rollback();
 			}
 		}
-		catch (SQLException e) {
+		catch (Exception e) {
 			// ignore
 		}
-		connection.close();
+		finally {
+			connection.close();
+		}
 	}
 
 	private void commit(Connection connection) throws SQLException {
-		if (!connection.getAutoCommit() && connection.getTransactionIsolation() != Connection.TRANSACTION_NONE) {
-			connection.commit();
+		try {
+			if (!connection.getAutoCommit() && connection.getTransactionIsolation() != Connection.TRANSACTION_NONE) {
+				connection.commit();
+			}
 		}
-		connection.close();
+		finally {
+			connection.close();
+		}
 	}
 	
 	private Connection getConnection() throws SQLException {
