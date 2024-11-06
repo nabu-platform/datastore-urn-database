@@ -1,20 +1,17 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>be.nabu.libs.datastore</groupId>
 	<artifactId>datastore-urn-database</artifactId>
 	<packaging>jar</packaging>
-	<version>${be.nabu.libs.datastore-datastore-urn-database-version}</version>
+	<version>1.2</version>
 	<name>datastore-urn-database</name>
 	<url>http://nabu.be</url>
 	<description>A framework for data storage</description>
-
 	<parent>
 		<groupId>be.nabu</groupId>
 		<artifactId>core</artifactId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -27,7 +24,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<dependencies>
 		<dependency>
 			<groupId>be.nabu.libs.datastore</groupId>
@@ -38,5 +34,4 @@
 			<artifactId>resources-api</artifactId>
 		</dependency>
 	</dependencies>
-
 </project>
